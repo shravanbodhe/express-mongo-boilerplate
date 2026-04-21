@@ -1,0 +1,40 @@
+# हे GitHub Actions workflow आहे
+# जेव्हा तू main branch वर code push करतोस
+# तेव्हा हे automatically EC2 वर deploy करतो
+
+name: Deploy to EC2  # workflow चं नाव
+
+# कधी run करायचं?
+on:
+  push:
+    branches:
+      - main  # फक्त main branch वर push झाल्यावर
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # GitHub चा Ubuntu server वापरतो
+
+    steps:
+      # Step 1: AWS शी connect होणे
+      # AWS_ACCESS_KEY_ID आणि AWS_SECRET_ACCESS_KEY
+      # GitHub Secrets मध्ये store केलेले असतात
+      - name: AWS ला connect करा
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1  # Mumbai region
+
+      # Step 2: EC2 वर commands run करणे
+      # SSM वापरून port 22 शिवाय EC2 ला commands पाठवतो
+      - name: EC2 वर deploy करा
+        run: |
+          aws ssm send-command \
+            --instance-ids "i-0ab88b1db59576571" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=[
+              "cd /home/ubuntu/express-mongo-boilerplate",
+              "git pull origin main",
+              "npm install",
+              "pm2 restart server"
+            ]'

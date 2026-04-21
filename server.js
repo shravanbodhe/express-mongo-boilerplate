@@ -8,6 +8,7 @@ const app = express();
 console.log('$----------------------server Started----------------------$');
 
 
+console.log('$----------------------TEEEST----------------------$');
 
 connectDB();
 
