@@ -55,11 +55,15 @@ router.post('/login', async (req, res) => {
 
     // लॉगिनची सुरुवात: ईमेल व पासवर्ड आवश्यक आहेत
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+      return res
+        .status(400)
+        .json({ message: 'Email and password are required' });
     }
 
     // उपयोगकर्ता शोधा आणि पासवर्डसहित मिळवा
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+    const user = await User.findOne({ email: email.toLowerCase() }).select(
+      '+password'
+    );
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }

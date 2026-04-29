@@ -32,6 +32,7 @@ module.exports = async (req, res, next) => {
     next();
   } catch (error) {
     // टोकन अमान्य किंवा एखादी इतर चूक झाल्यास 401 परत करा.
+    console.error(error);
     res.status(401).json({ message: 'Invalid token' });
   }
 };
